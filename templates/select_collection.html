@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Collection</title>
+    <script>
+        // Fetch collections from the backend (if using the fetch approach)
+        function loadCollections() {
+            fetch('/collections')
+                .then(response => response.json())
+                .then(collections => {
+                    const selectElement = document.getElementById('collectionsDropdown');
+                    if (collections.length === 0) {
+                        selectElement.innerHTML = '<option value="">No collections available</option>';
+                    } else {
+                        collections.forEach(collection => {
+                            const option = document.createElement('option');
+                            option.value = collection;
+                            option.textContent = collection;
+                            selectElement.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching collections:', error));
+        }
+
+        // Handle collection selection
+        function onCollectionSelect() {
+            const selectedCollection = document.getElementById('collectionsDropdown').value;
+            if (selectedCollection) {
+                window.location.href = `/collections/${selectedCollection}`;
+            }
+        }
+
+        // Load collections on page load
+        window.onload = loadCollections;
+    </script>
+</head>
+<body>
+    <h1>Select a Collection</h1>
+    <label for="collectionsDropdown">Choose a Collection:</label>
+    <select id="collectionsDropdown" onchange="onCollectionSelect()">
+        <option value="">-- Select a collection --</option>
+        {% if collections %}
+            {% for collection in collections %}
+                <option value="{{ collection }}">{{ collection }}</option>
+            {% endfor %}
+        {% else %}
+            <option value="">No collections available</option>
+        {% endif %}
+    </select>
+</body>
+</html>

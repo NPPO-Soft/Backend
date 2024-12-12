@@ -1,10 +1,22 @@
 from flask import Flask
+from Backend.routes.route import main_routes  
+from Backend.database.mongo_database import mongo_manager  
 
-app = Flask(__name__)
+def create_app():
+    """Create and configure the Flask application."""
+    app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return "Hello, Flask!"
+    app.register_blueprint(main_routes)
 
-if __name__ == '__main__':
+    try:
+        mongo_manager.db.list_collection_names()
+        print("Connected to MongoDB successfully!")
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {e}")
+
+    return app
+
+
+if __name__ == "__main__":
+    app = create_app()
     app.run(debug=True)

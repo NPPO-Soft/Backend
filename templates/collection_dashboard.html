@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection - {{ collection_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin: 50px;
+        }
+        .collection-name {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .document {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .document-header {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .document-content {
+            margin-top: 10px;
+        }
+        .back-button, .add-document-button {
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .back-button:hover, .add-document-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="collection-name">Collection: {{ collection_name }}</h1>
+
+        {% if documents %}
+            <div>
+                {% for document in documents %}
+                    <div class="document">
+                        <div class="document-header">
+                            Document
+                        </div>
+                        <div class="document-content">
+                            <!-- Render the document as JSON without the _id field -->
+                            <pre>{{ document | tojson(indent=2) }}</pre>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No documents found in this collection.</p>
+        {% endif %}
+        
+        <button class="back-button" onclick="window.location.href='/collections'">Back to Collections</button>
+        <!-- Add the new button for adding a document -->
+        <button class="add-document-button" onclick="window.location.href='/dashboard'">Add Document</button>
+    </div>
+</body>
+</html>
