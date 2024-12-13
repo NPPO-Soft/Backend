@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard</h1>
+
+    <!-- Form for Adding a Document -->
+    <form action="{{ url_for('main_routes.dashboard') }}" method="POST">
+        <h2>Add New Document</h2>
+        <label for="collection">Select Collection:</label>
+        <select id="collection" name="collection" required>
+            {% for collection in collections %}
+                <option value="{{ collection }}">{{ collection }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+
+        <label for="department">Department:</label>
+        <input type="text" id="department" name="department" required>
+
+        <button type="submit" name="add_document">Add Document</button>
+    </form>
+
+    <!-- Form for Uploading an Image -->
+    <form action="{{ url_for('main_routes.dashboard') }}" method="POST" enctype="multipart/form-data">
+        <h2>Upload Image</h2>
+        <label for="image">Choose an image to upload:</label>
+        <input type="file" id="image" name="image" accept=".png, .jpg, .jpeg, .gif" required>
+
+        <button type="submit" name="upload_image">Upload Image</button>
+    </form>
+</body>
+</html>
