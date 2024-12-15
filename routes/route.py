@@ -7,15 +7,24 @@ main_routes = Blueprint("main_routes", __name__)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+
 def allowed_file(filename):
     """Check if the uploaded file has an allowed extension."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@main_routes.route("/", methods=["GET"])
+def index():
+    """Render the home page with navigation buttons."""
+    return render_template("index.html")
 
 @main_routes.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     """Handle adding documents and uploading images."""
     # Get list of collections in the database
     collections = mongo_manager.db.list_collection_names()
+
+    # Filter out system collections (those starting with "system.")
+    collections = [collection for collection in collections if not collection.startswith('system.')]
 
     if request.method == "POST":
         # Determine which form was submitted
@@ -55,25 +64,25 @@ def dashboard():
 
     return render_template("dashboard.html", collections=collections)
 
-@main_routes.route("/collections", methods=["GET"])
+
+@main_routes.route("/collections", methods=["GET", "POST"])
 def get_collections():
     """Retrieve all collections from the database and render collection selection page."""
-    database = mongo_manager.get_database("BS_Database")
-    collections = database.list_collection_names()
-    
-    # Log collections to ensure they are fetched
-    print(f"Collections: {collections}")  # Debugging line
-    
-    return render_template("select_collection.html", collections=collections)
+    collections = mongo_manager.db.list_collection_names()
 
-@main_routes.route("/collections/<collection_name>", methods=["GET"])
-def collection_dashboard(collection_name):
-    """Render the dashboard page for a specific collection."""
-    database = mongo_manager.get_database("BS_Database")
-    collection = database[collection_name]
-    documents = collection.find()  # Retrieve all documents in the collection
+    # Filter out system collections
+    collections = [collection for collection in collections if not collection.startswith('system.')]
 
-    # Remove the '_id' field from each document
-    documents_list = [{key: value for key, value in document.items() if key != '_id'} for document in documents]
+    selected_collection = None
+    documents = []
 
-    return render_template('collection_dashboard.html', collection_name=collection_name, documents=documents_list)
+    if request.method == "POST":
+        selected_collection = request.form.get("selected_collection")
+        if selected_collection:
+            collection = mongo_manager.get_collection(selected_collection)
+            documents_cursor = collection.find()  # Retrieve all documents in the collection
+
+            # Remove the '_id' field from each document
+            documents = [{key: value for key, value in document.items() if key != '_id'} for document in documents_cursor]
+
+    return render_template("select_collection.html", collections=collections, selected_collection=selected_collection, documents=documents)
