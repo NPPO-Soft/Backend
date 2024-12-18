@@ -66,7 +66,7 @@ def dashboard():
 
 
 @main_routes.route("/collections", methods=["GET", "POST"])
-def get_collections_page():
+def get_collections():
     """Retrieve all collections from the database and render collection selection page."""
     collections = mongo_manager.db.list_collection_names()
 
