@@ -66,7 +66,7 @@ def dashboard():
 
 
 @main_routes.route("/collections", methods=["GET", "POST"])
-def get_collections():
+def get_collections_page():
     """Retrieve all collections from the database and render collection selection page."""
     collections = mongo_manager.db.list_collection_names()
 
@@ -86,3 +86,35 @@ def get_collections():
             documents = [{key: value for key, value in document.items() if key != '_id'} for document in documents_cursor]
 
     return render_template("select_collection.html", collections=collections, selected_collection=selected_collection, documents=documents)
+
+
+@main_routes.route("/api/collections", methods=["GET", "POST"])
+def get_collections_api():
+    """Retrieve all collections from the database and return them as JSON."""
+    collections = mongo_manager.db.list_collection_names()
+
+    # Filter out system collections
+    collections = [collection for collection in collections if not collection.startswith('system.')]
+
+    if request.method == "POST":
+        selected_collection = request.json.get("selected_collection")
+        documents = []
+
+        if selected_collection:
+            collection = mongo_manager.get_collection(selected_collection)
+            documents_cursor = collection.find()  # Retrieve all documents in the collection
+
+            # Remove the '_id' field from each document
+            documents = [{key: value for key, value in document.items() if key != '_id'} for document in documents_cursor]
+
+        response = {
+            "documents": documents
+        }
+        return jsonify(response)
+
+    # GET method to return collections
+    response = {
+        "collections": collections
+    }
+
+    return jsonify(response)
