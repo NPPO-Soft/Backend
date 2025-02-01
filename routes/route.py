@@ -39,7 +39,7 @@ def dashboard():
             # Insert data into the selected collection
             collection = mongo_manager.get_collection(selected_collection)
             collection.insert_one(data)
-            return redirect(url_for("main_routes.collection_dashboard", collection_name=selected_collection))
+            return redirect(url_for("main_routes.dashboard", collection_name=selected_collection))
 
         elif "upload_image" in request.form:
             # Handle image upload
@@ -118,3 +118,76 @@ def get_collections_api():
     }
 
     return jsonify(response)
+
+@main_routes.route("/api/recrutari", methods=["POST"])
+def submit_recruitment():
+    """Endpoint to handle recruitment form submissions."""
+    try:
+        # Get JSON data from request
+        data = request.json
+
+        # Validate required fields
+        required_fields = ["nume", "prenume", "email", "facultate", "anUniversitar", "motivatie"]
+        if not all(field in data and data[field] for field in required_fields):
+            return jsonify({"success": False, "message": "Missing required fields"}), 400
+
+        # Validate email format
+        if "@" not in data["email"]:
+            return jsonify({"success": False, "message": "Invalid email format"}), 400
+
+        # Add an empty "Interview" field to the data
+        data["Interview"] = ""  # This field will be empty initially
+
+        # Insert into MongoDB
+        collection = mongo_manager.get_collection("recruitments")
+        collection.insert_one(data)
+
+        return jsonify({"success": True, "message": "Application submitted successfully"}), 201
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+    
+@main_routes.route("/api/interview", methods=["GET"])
+def check_interview():
+    """Check if a user has an interview date."""
+    try:
+        # Get parameters from request
+        nume = request.args.get("nume")
+        prenume = request.args.get("prenume")
+        facultate = request.args.get("facultate")
+        anUniversitar = request.args.get("anUniversitar")
+
+        # Validate required fields
+        if not all([nume, prenume, facultate, anUniversitar]):
+            return jsonify({"success": False, "message": "Missing required fields"}), 400
+
+        # Connect to MongoDB and find user
+        collection = mongo_manager.get_collection("recruitments")
+        user = collection.find_one({
+            "nume": nume,
+            "prenume": prenume,
+            "facultate": facultate,
+            "anUniversitar": anUniversitar
+        })
+
+        # If user exists, check if an interview date is set
+        if user:
+            interview_date = user.get("Interview", "")
+
+            if interview_date:
+                return jsonify({
+                    "success": True,
+                    "interview": interview_date
+                }), 200
+            else:
+                return jsonify({
+                    "success": True,
+                    "interview": "No interview date set yet."
+                }), 200
+        else:
+            return jsonify({"success": False, "message": "User not found"}), 404
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+
+
