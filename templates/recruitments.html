@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Applications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'racing-blue': '#1a3c6c',
+                        'racing-darkblue': '#142e52'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <nav class="bg-racing-blue p-4">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <h1 class="text-white text-xl font-bold">Racing Team Management</h1>
+                <a href="/" class="text-white hover:text-gray-200">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 flex-1">
+        <h2 class="text-2xl font-semibold mb-6 text-racing-blue">Recruitment Applications</h2>
+
+        {% if recruitments %}
+        <div class="overflow-x-auto bg-white rounded-lg shadow">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-racing-blue text-white">
+                        {% for field in fields %}
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">
+                            {{ field }}
+                        </th>
+                        {% endfor %}
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for recruitment in recruitments %}
+                    <tr class="hover:bg-gray-50">
+                        {% for field in fields %}
+                        <td class="px-6 py-4 text-sm text-gray-900">
+                            {% if field == 'motivatie' %}
+                                <div class="max-w-xs overflow-hidden text-ellipsis">
+                                    {{ recruitment[field]|truncate(100) }}
+                                </div>
+                            {% elif field == 'Interview' %}
+                                {% if recruitment['Interview'] %}
+                                    <span class="block">📅 Date: {{ recruitment['Interview'].get('date', 'No date set') }}</span>
+                                    <span class="block">⏰ Hour: {{ recruitment['Interview'].get('hour', 'No hour set') }}</span>
+                                    <span class="block">📍 Location: {{ recruitment['Interview'].get('location', 'No location set') }}</span>
+                                {% else %}
+                                    <span>No interview set</span>
+                                {% endif %}
+                            {% else %}
+                                {{ recruitment[field] }}
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                        <td class="px-6 py-4 text-sm">
+                            <form action="{{ url_for('main_routes.set_interview_date') }}" method="POST">
+                                <input type="hidden" name="applicant_id" value="{{ recruitment.get('id', recruitment.get('_id')) }}">
+                        
+                                <!-- Date Picker -->
+                                <label class="block text-xs text-gray-600">Date:</label>
+                                <input type="date" name="interview_date" class="border border-gray-300 px-2 py-1 rounded-md w-full mb-2" required>
+                        
+                                <!-- Time Picker -->
+                                <label class="block text-xs text-gray-600">Hour:</label>
+                                <input type="time" name="interview_hour" class="border border-gray-300 px-2 py-1 rounded-md w-full mb-2" required>
+                        
+                                <!-- Location Input -->
+                                <label class="block text-xs text-gray-600">Location:</label>
+                                <input type="text" name="interview_location" placeholder="Enter location" 
+                                    class="border border-gray-300 px-2 py-1 rounded-md w-full mb-2" required>
+                        
+                                <button type="submit" 
+                                    class="{% if recruitment['Interview'] %} bg-yellow-500 hover:bg-yellow-600 {% else %} bg-green-500 hover:bg-green-600 {% endif %} text-white py-1 px-3 rounded-md transition w-full">
+                                    {% if recruitment['Interview'] %}
+                                        Change Interview Details
+                                    {% else %}
+                                        Set Interview Details
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-8 bg-white rounded-lg shadow">
+            <p class="text-gray-600">No recruitment applications found.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="bg-racing-blue text-white py-4 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Racing Team. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

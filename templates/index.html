@@ -1,73 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Racing Teams Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              racing: {
-                blue: "#007bff" /* Blue color for the theme */,
-                darkblue: "#0056b3" /* Darker blue for hover effects */,
-                gray: "#38383f",
-              },
-            },
-            fontFamily: {
-              sans: ["Inter", "sans-serif"],
-            },
-          },
-        },
-      };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'racing-blue': '#1a3c6c',
+                        'racing-darkblue': '#142e52'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
     </script>
-  </head>
-  <body class="bg-blue-50 font-sans">
-    <div class="min-h-screen flex flex-col">
-      <header class="bg-racing-blue text-white py-6">
-        <div class="container mx-auto px-4">
-          <h1 class="text-3xl font-bold text-center">Racing Teams Dashboard</h1>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen font-sans">
+
+    <nav class="bg-racing-blue p-4">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <h1 class="text-white text-xl font-bold">Racing Teams Dashboard</h1>
+                <a href="/" class="text-white hover:text-gray-200">Home</a>
+            </div>
         </div>
-      </header>
+    </nav>
 
-      <main class="flex-grow container mx-auto px-4 py-8">
-        <div class="grid md:grid-cols-2 gap-8">
-          <!-- Navigation Buttons -->
-          <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <h2 class="text-2xl font-semibold mb-6 text-racing-blue">
-              Dashboard
-            </h2>
-            <a
-              href="{{ url_for('main_routes.dashboard') }}"
-              class="block bg-racing-blue text-white py-2 px-4 rounded-md hover:bg-racing-darkblue mb-4"
-            >
-              Go to Dashboard
-            </a>
+    <main class="container mx-auto px-4 py-8 flex-1">
+        <h2 class="text-2xl font-semibold mb-6 text-racing-blue text-center">Welcome to the Racing Teams Dashboard</h2>
 
-            <h2 class="text-2xl font-semibold mb-6 text-racing-blue">
-              Collections
-            </h2>
-            <a
-              href="{{ url_for('main_routes.get_collections') }}"
-              class="block bg-racing-blue text-white py-2 px-4 rounded-md hover:bg-racing-darkblue"
-            >
-              View Collections
-            </a>
-          </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Dashboard -->
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <h3 class="text-xl font-semibold mb-4 text-racing-blue">Testimonials</h3>
+                <a href="{{ url_for('main_routes.get_testimonials') }}" 
+                   class="block bg-racing-blue text-white py-2 px-4 rounded-md hover:bg-racing-darkblue">
+                    View Testimonials
+                </a>
+            </div>
+
+            <!-- Collections -->
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <h3 class="text-xl font-semibold mb-4 text-racing-blue">Teams</h3>
+                <a href="{{ url_for('main_routes.get_teams') }}" 
+                   class="block bg-racing-blue text-white py-2 px-4 rounded-md hover:bg-racing-darkblue">
+                    View Teams
+                </a>
+            </div>
+
+            <!-- Recruitments -->
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <h3 class="text-xl font-semibold mb-4 text-racing-blue">Recruitments</h3>
+                <a href="{{ url_for('main_routes.get_recruitments') }}" 
+                   class="block bg-racing-blue text-white py-2 px-4 rounded-md hover:bg-racing-darkblue">
+                    View Recruitments
+                </a>
+            </div>
         </div>
-      </main>
+    </main>
 
-      <footer class="bg-racing-blue text-white py-4 mt-8">
+    <footer class="bg-racing-blue text-white py-4 mt-8">
         <div class="container mx-auto px-4 text-center">
-          <p>&copy; 2023 Racing Teams Dashboard. All rights reserved.</p>
+            <p>&copy; 2025 Racing Teams Dashboard. All rights reserved.</p>
         </div>
-      </footer>
-    </div>
-  </body>
+    </footer>
+
+</body>
 </html>
