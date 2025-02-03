@@ -142,6 +142,22 @@ def delete_team_member(member_id):
 
     except Exception as e:
         return redirect(url_for("main_routes.get_teams"))
+    
+@main_routes.route("/api/teams", methods=["GET"])
+def api_get_tems():
+    """Retrieve all teams and return as JSON for the frontend."""
+    try:
+        collection = mongo_manager.get_collection("teams")
+        teams = list(collection.find())
+
+        # Convert `_id` to string for JSON compatibility
+        for team in teams:
+            team["_id"] = str(team["_id"])
+
+        return jsonify({"success": True, "teams": teams}), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
 
 
