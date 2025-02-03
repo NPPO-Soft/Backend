@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teams</title>
+    <title>History</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -19,7 +19,7 @@
     </script>
     <script>
         function toggleForm() {
-            const form = document.getElementById("team-form");
+            const form = document.getElementById("history-form");
             form.classList.toggle("hidden");
         }
     </script>
@@ -28,7 +28,7 @@
     <nav class="bg-racing-blue p-4">
         <div class="container mx-auto">
             <div class="flex justify-between items-center">
-                <h1 class="text-white text-xl font-bold">BlueStreamline Management</h1>
+                <h1 class="text-white text-xl font-bold">Racing History</h1>
                 <a href="/" class="text-white hover:text-gray-200">Back to Home</a>
             </div>
         </div>
@@ -36,30 +36,30 @@
 
     <div class="container mx-auto px-4 py-8 flex-1">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-semibold text-racing-blue">Team Members</h2>
+            <h2 class="text-2xl font-semibold text-racing-blue">Racing History</h2>
             <button onclick="toggleForm()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
-                + Add Team Member
+                + Add Racing History
             </button>
         </div>
 
-        <!-- Team Member Form (Initially Hidden) -->
-        <div id="team-form" class="hidden bg-white p-6 rounded-lg shadow mb-6">
-            <h3 class="text-lg font-semibold text-racing-blue mb-4">Add a Team Member</h3>
-            <form action="{{ url_for('main_routes.add_team_member') }}" method="POST" enctype="multipart/form-data">
+        <!-- Racing History Form (Initially Hidden) -->
+        <div id="history-form" class="hidden bg-white p-6 rounded-lg shadow mb-6">
+            <h3 class="text-lg font-semibold text-racing-blue mb-4">Add a Racing History Record</h3>
+            <form action="{{ url_for('main_routes.add_history_record') }}" method="POST" enctype="multipart/form-data">
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-medium">Name:</label>
-                    <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-racing-blue focus:border-racing-blue">
+                    <label class="block text-gray-700 font-medium">Car Name:</label>
+                    <input type="text" name="car_name" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-racing-blue focus:border-racing-blue">
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-medium">Department:</label>
-                    <input type="text" name="department" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-racing-blue focus:border-racing-blue">
+                    <label class="block text-gray-700 font-medium">Title:</label>
+                    <input type="text" name="title" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-racing-blue focus:border-racing-blue">
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 font-medium">Upload Image:</label>
                     <input type="file" name="image" accept="image/*" required class="w-full px-2 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-racing-blue focus:border-racing-blue">
                 </div>
                 <button type="submit" class="w-full bg-racing-blue text-white py-2 rounded-md hover:bg-racing-darkblue transition">
-                    Submit Team Member
+                    Submit Racing History
                 </button>
             </form>
         </div>
@@ -68,31 +68,31 @@
             <div class="text-center py-4 bg-red-500 text-white rounded-lg shadow">
                 <p>{{ error_message }}</p>
             </div>
-        {% elif team_members %}
+        {% elif history_records %}
         <div class="overflow-x-auto bg-white rounded-lg shadow">
             <table class="min-w-full">
                 <thead>
                     <tr class="bg-racing-blue text-white">
                         <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Image</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Department</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Car Name</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Title</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    {% for member in team_members %}
+                    {% for record in history_records %}
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 text-sm text-gray-900">
-                            <img src="{{ member.image }}" alt="Team Member Image" class="w-12 h-12 rounded-full">
+                            <img src="{{ record.image }}" alt="History Image" class="w-12 h-12 rounded-full">
                         </td>                        
                         <td class="px-6 py-4 text-sm font-semibold text-racing-blue">
-                            {{ member.name }}
+                            {{ record.car_name }}
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-900">
-                            {{ member.department }}
+                            {{ record.title }}
                         </td>
                         <td class="px-6 py-4 text-sm">
-                            <form action="{{ url_for('main_routes.delete_team_member', member_id=member._id) }}" method="POST">
+                            <form action="{{ url_for('main_routes.delete_history_record', record_id=record._id) }}" method="POST">
                                 <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition">
                                     Delete
                                 </button>
@@ -105,14 +105,14 @@
         </div>
         {% else %}
         <div class="text-center py-8 bg-white rounded-lg shadow">
-            <p class="text-gray-600">No team members found.</p>
+            <p class="text-gray-600">No racing history found.</p>
         </div>
         {% endif %}
     </div>
 
     <footer class="bg-racing-blue text-white py-4 mt-8">
         <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2009-2025 BlueStreamline. All rights reserved.</p>
+            <p>&copy; 2025 BlueStreamline. All rights reserved.</p>
         </div>
     </footer>
 </body>

@@ -330,3 +330,69 @@ def set_interview_date():
 
     return redirect(url_for('main_routes.get_recruitments'))  # Redirect after successful update
 
+@main_routes.route("/history", methods=["GET"])
+def get_history():
+    """Retrieve all history records and render the history page."""
+    collection = mongo_manager.get_collection("history")
+    records = list(collection.find())
+
+    for record in records:
+        record["_id"] = str(record["_id"])
+
+    return render_template("history.html", history_records=records)
+
+@main_routes.route("/history/add", methods=["POST"])
+def add_history_record():
+    """Add a new history record with image stored as Base64."""
+    try:
+        car_name = request.form.get("car_name")
+        title = request.form.get("title")
+        image = request.files.get("image")
+
+        if not car_name or not title or not image:
+            return redirect(url_for("main_routes.get_history"))
+
+        # Convert image to Base64
+        image_data = base64.b64encode(image.read()).decode("utf-8")
+
+        # Insert into MongoDB
+        collection = mongo_manager.get_collection("history")
+        collection.insert_one({
+            "car_name": car_name,
+            "title": title,
+            "image": f"data:{image.content_type};base64,{image_data}"
+        })
+
+        return redirect(url_for("main_routes.get_history"))
+
+    except Exception as e:
+        return redirect(url_for("main_routes.get_history"))
+
+@main_routes.route("/history/delete/<string:record_id>", methods=["POST"])
+def delete_history_record(record_id):
+    """Delete a history record by ID."""
+    try:
+        collection = mongo_manager.get_collection("history")
+        collection.delete_one({"_id": ObjectId(record_id)})
+        return redirect(url_for("main_routes.get_history"))
+
+    except Exception as e:
+        return redirect(url_for("main_routes.get_history"))
+
+@main_routes.route("/api/history", methods=["GET"])
+def api_get_history():
+    """Retrieve all history records and return as JSON for the frontend."""
+    try:
+        collection = mongo_manager.get_collection("history")
+        history = list(collection.find())
+
+        # Convert `_id` to string for JSON compatibility
+        for record in history:
+            record["_id"] = str(record["_id"])
+
+        return jsonify({"success": True, "history": history}), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+
+

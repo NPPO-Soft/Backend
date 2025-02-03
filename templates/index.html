@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Racing Teams Dashboard</title>
+    <title>BlueStreamline Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script>
@@ -27,14 +27,14 @@
     <nav class="bg-racing-blue p-4">
         <div class="container mx-auto">
             <div class="flex justify-between items-center">
-                <h1 class="text-white text-xl font-bold">Racing Teams Dashboard</h1>
+                <h1 class="text-white text-xl font-bold">BlueStreamline Dashboard</h1>
                 <a href="/" class="text-white hover:text-gray-200">Home</a>
             </div>
         </div>
     </nav>
 
     <main class="container mx-auto px-4 py-8 flex-1">
-        <h2 class="text-2xl font-semibold mb-6 text-racing-blue text-center">Welcome to the Racing Teams Dashboard</h2>
+        <h2 class="text-2xl font-semibold mb-6 text-racing-blue text-center">Welcome to the BlueStreamline Dashboard</h2>
 
         <div class="grid md:grid-cols-3 gap-8">
             <!-- Dashboard -->
@@ -46,12 +46,21 @@
                 </a>
             </div>
 
-            <!-- Collections -->
+            <!-- Teams -->
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <h3 class="text-xl font-semibold mb-4 text-racing-blue">Teams</h3>
                 <a href="{{ url_for('main_routes.get_teams') }}" 
                    class="block bg-racing-blue text-white py-2 px-4 rounded-md hover:bg-racing-darkblue">
                     View Teams
+                </a>
+            </div>
+
+            <!-- History -->
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <h3 class="text-xl font-semibold mb-4 text-racing-blue">History</h3>
+                <a href="{{ url_for('main_routes.get_history') }}" 
+                   class="block bg-racing-blue text-white py-2 px-4 rounded-md hover:bg-racing-darkblue">
+                    View History
                 </a>
             </div>
 
@@ -68,7 +77,7 @@
 
     <footer class="bg-racing-blue text-white py-4 mt-8">
         <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2025 Racing Teams Dashboard. All rights reserved.</p>
+            <p>&copy; 2009-2025 BlueStreamline Dashboard. All rights reserved.</p>
         </div>
     </footer>
 
