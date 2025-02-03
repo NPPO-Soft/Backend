@@ -4,7 +4,6 @@ import base64
 import logging
 from bson import ObjectId
 
-# Create a Blueprint for routes
 main_routes = Blueprint("main_routes", __name__)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -26,7 +25,6 @@ def get_testimonials():
         collection = mongo_manager.get_collection("testimonials")
         testimonials = list(collection.find())
 
-        # Convert `_id` to string for template rendering
         for testimonial in testimonials:
             testimonial["_id"] = str(testimonial["_id"])
 
@@ -43,19 +41,16 @@ def add_testimonial():
         text = request.form.get("text")
         image = request.files.get("image")
 
-        # Ensure all fields are provided
         if not name or not text or not image:
             return redirect(url_for("main_routes.get_testimonials"))
 
-        # Convert image to Base64
         image_data = base64.b64encode(image.read()).decode("utf-8")
 
-        # Insert into MongoDB
         collection = mongo_manager.get_collection("testimonials")
         collection.insert_one({
             "name": name,
             "text": text,
-            "image": f"data:{image.content_type};base64,{image_data}"  # Format Base64 as data URL
+            "image": f"data:{image.content_type};base64,{image_data}" 
         })
 
         return redirect(url_for("main_routes.get_testimonials"))
@@ -85,7 +80,7 @@ def api_get_testimonials():
         collection = mongo_manager.get_collection("testimonials")
         testimonials = list(collection.find())
 
-        # Convert `_id` to string for JSON compatibility
+
         for testimonial in testimonials:
             testimonial["_id"] = str(testimonial["_id"])
 
@@ -116,10 +111,10 @@ def add_team_member():
         if not name or not department or not image:
             return redirect(url_for("main_routes.get_teams"))
 
-        # Convert image to Base64
+
         image_data = base64.b64encode(image.read()).decode("utf-8")
 
-        # Insert into MongoDB
+
         collection = mongo_manager.get_collection("teams")
         collection.insert_one({
             "name": name,
@@ -150,7 +145,7 @@ def api_get_tems():
         collection = mongo_manager.get_collection("teams")
         teams = list(collection.find())
 
-        # Convert `_id` to string for JSON compatibility
+
         for team in teams:
             team["_id"] = str(team["_id"])
 
@@ -165,26 +160,23 @@ def api_get_tems():
 def submit_recruitment():
     """Endpoint to handle recruitment form submissions."""
     try:
-        # Get JSON data from request
+
         data = request.json
 
-        # Validate required fields
+
         required_fields = ["nume", "prenume", "email", "facultate", "anUniversitar", "motivatie"]
         if not all(field in data and data[field] for field in required_fields):
             return jsonify({"success": False, "message": "Missing required fields"}), 400
 
-        # Validate email format
         if "@" not in data["email"]:
             return jsonify({"success": False, "message": "Invalid email format"}), 400
 
-        # Add an empty "Interview" structure
         data["Interview"] = {
             "date": "No date set",
             "hour": "No hour set",
             "location": "No location set"
         }
 
-        # Insert into MongoDB
         collection = mongo_manager.get_collection("recruitments")
         collection.insert_one(data)
 
@@ -198,17 +190,15 @@ def submit_recruitment():
 def check_interview():
     """Check if a user has an interview date, hour, and location."""
     try:
-        # Get parameters from request
+
         nume = request.args.get("nume")
         prenume = request.args.get("prenume")
         facultate = request.args.get("facultate")
         anUniversitar = request.args.get("anUniversitar")
 
-        # Validate required fields
         if not all([nume, prenume, facultate, anUniversitar]):
             return jsonify({"success": False, "message": "Missing required fields"}), 400
 
-        # Connect to MongoDB and find user
         collection = mongo_manager.get_collection("recruitments")
         user = collection.find_one({
             "nume": nume,
@@ -217,7 +207,6 @@ def check_interview():
             "anUniversitar": anUniversitar
         })
 
-        # If user exists, check if interview details are set
         if user:
             interview = user.get("Interview", {})
             interview_date = interview.get("date", "No date set")
@@ -248,11 +237,9 @@ def get_recruitments():
         if not recruitments:
             logging.warning("No recruitments found in the database!")
 
-        # Convert _id to string and restructure Interview data
         for recruitment in recruitments:
-            recruitment["_id"] = str(recruitment["_id"])  # Ensure _id is a string
+            recruitment["_id"] = str(recruitment["_id"])  
 
-            # Ensure Interview field exists and is a dictionary
             if "Interview" not in recruitment or not isinstance(recruitment["Interview"], dict):
                 recruitment["Interview"] = {
                     "date": "No date set",
@@ -260,12 +247,11 @@ def get_recruitments():
                     "location": "No location set"
                 }
             else:
-                # Fill missing fields with default values
                 recruitment["Interview"].setdefault("date", "No date set")
                 recruitment["Interview"].setdefault("hour", "No hour set")
                 recruitment["Interview"].setdefault("location", "No location set")
 
-            logging.info(f"Recruitment Data: {recruitment}")  # Debugging output
+            logging.info(f"Recruitment Data: {recruitment}")  
 
         return render_template(
             "recruitments.html",
@@ -301,24 +287,20 @@ def set_interview_date():
     new_hour = request.form.get('interview_hour')
     new_location = request.form.get('interview_location')
 
-    # Ensure required fields are provided
     if not all([new_date, new_hour, new_location]):
-        return redirect(url_for('main_routes.get_recruitments'))  # Redirect with no message
+        return redirect(url_for('main_routes.get_recruitments'))  
 
-    # Convert `applicant_id` to ObjectId if necessary
     try:
         object_id = ObjectId(applicant_id)
     except Exception:
-        return redirect(url_for('main_routes.get_recruitments'))  # Redirect if invalid ID
+        return redirect(url_for('main_routes.get_recruitments')) 
 
-    # Fetch the applicant from the database
     collection = mongo_manager.get_collection("recruitments")
     applicant = collection.find_one({"_id": object_id})
 
     if not applicant:
-        return redirect(url_for('main_routes.get_recruitments'))  # Redirect if applicant not found
+        return redirect(url_for('main_routes.get_recruitments')) 
 
-    # Update interview details
     collection.update_one(
         {"_id": object_id}, 
         {"$set": {
@@ -328,7 +310,7 @@ def set_interview_date():
         }}
     )
 
-    return redirect(url_for('main_routes.get_recruitments'))  # Redirect after successful update
+    return redirect(url_for('main_routes.get_recruitments'))  
 
 @main_routes.route("/history", methods=["GET"])
 def get_history():
@@ -352,10 +334,8 @@ def add_history_record():
         if not car_name or not title or not image:
             return redirect(url_for("main_routes.get_history"))
 
-        # Convert image to Base64
         image_data = base64.b64encode(image.read()).decode("utf-8")
 
-        # Insert into MongoDB
         collection = mongo_manager.get_collection("history")
         collection.insert_one({
             "car_name": car_name,
@@ -386,7 +366,6 @@ def api_get_history():
         collection = mongo_manager.get_collection("history")
         history = list(collection.find())
 
-        # Convert `_id` to string for JSON compatibility
         for record in history:
             record["_id"] = str(record["_id"])
 

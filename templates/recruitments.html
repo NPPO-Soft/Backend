@@ -69,16 +69,13 @@
                         <td class="px-6 py-4 text-sm">
                             <form action="{{ url_for('main_routes.set_interview_date') }}" method="POST">
                                 <input type="hidden" name="applicant_id" value="{{ recruitment.get('id', recruitment.get('_id')) }}">
-                        
-                                <!-- Date Picker -->
+
                                 <label class="block text-xs text-gray-600">Date:</label>
                                 <input type="date" name="interview_date" class="border border-gray-300 px-2 py-1 rounded-md w-full mb-2" required>
-                        
-                                <!-- Time Picker -->
+
                                 <label class="block text-xs text-gray-600">Hour:</label>
                                 <input type="time" name="interview_hour" class="border border-gray-300 px-2 py-1 rounded-md w-full mb-2" required>
-                        
-                                <!-- Location Input -->
+
                                 <label class="block text-xs text-gray-600">Location:</label>
                                 <input type="text" name="interview_location" placeholder="Enter location" 
                                     class="border border-gray-300 px-2 py-1 rounded-md w-full mb-2" required>
