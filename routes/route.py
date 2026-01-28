@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
-from Backend.database.mongo_database import mongo_manager
+from database.mongo_database import mongo_manager
 import base64
 import logging
 from bson import ObjectId

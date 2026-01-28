@@ -1,6 +1,6 @@
 from flask import Flask
-from Backend.routes.route import main_routes  
-from Backend.database.mongo_database import mongo_manager  
+from routes.route import main_routes  
+from database.mongo_database import mongo_manager  
 
 def create_app():
     """Create and configure the Flask application."""
